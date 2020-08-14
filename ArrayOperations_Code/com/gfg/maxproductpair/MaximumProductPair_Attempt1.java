@@ -5,7 +5,7 @@ import java.util.Arrays;
  * Attempt 1 : 
  * Time complexity : O(2n) (Worst)
  * Space complexity : O(1) (Worst)
- * Time taken for Small data size : 164 ms
+ * Time taken for Small data size : 164 ms , 293 ms (Increased after adding Math.abs), 143 ms (Reduced use of Math.abs)
  * 
  * TODO : 
  * 1. Work on duplicate values - duplicate max , second max
@@ -15,14 +15,17 @@ import java.util.Arrays;
  * 5. Output needs to be printed with Case
  * 6. Needs to add Scanner 
  * 7. Need to read input from a csv file
+ * 8. Test for negative numbers - done
+ * 9. Optimize use of Math.abs - done 
+ * 10. Comparision operator using bitwise operation 
  */
 
-public class MaximumProductPair_1 {
+public class MaximumProductPair_Attempt1 {
 
 	
 	public static void main(String[] args) {
 		
-		int[] arr = {1,2,3,4} ;
+		int[] arr = {1,2,3,-4} ;
 		
 		long startTime = System.currentTimeMillis();
 		triggerAlgo(arr);
@@ -32,7 +35,7 @@ public class MaximumProductPair_1 {
 	static void triggerAlgo(int[] arr){
 		
 		
-		int[] result=new int[2];  // Space - O(1)
+		int[] result=new int[4];  // Space - O(1)
 		
 		setInitialResultArray(arr,result);
 		
@@ -49,20 +52,28 @@ public class MaximumProductPair_1 {
 	 * in our result array is as per the array values
 	 */
 	static void setConsecutiveResultArray(int[] arr,int i,int[] result){
-		int k=0;
+
+		int absArrayElement =Math.abs(arr[i]);
+		CalcAbsInterface c = (arrayElement,resultArr,index) -> {
+			resultArr[index] =absArrayElement;
+			return arrayElement; 
+		} ;
 		
+			
 		// If the next index is greater than max in the result, swap all
-		if(Math.abs(result[k])<arr[i]){
+		if(result[3]<absArrayElement){
 			
 			result[0] = result[1];  // stores second max
 			result[1] = arr[i];  // stores max
-			
+			result[2] = Math.abs(result[0]);
+			result[3] = Math.abs(result[1]);
 		}
 		// If the next index is greater than or equal to max in the result, check for second max
-			else if(Math.abs(result[k])>=arr[i]){
+			else if(Math.abs(result[3])>=absArrayElement){
 				// swap only if the current array pointer s greater than the second max
-				result[0] = (Math.abs(result[0])>arr[i])? result[0]:arr[i];
-				
+				result[0] = (result[2]>absArrayElement)?
+						result[0]:c.calcAbsInterface(absArrayElement, result,2);
+	
 		}
 			
 	
@@ -76,11 +87,24 @@ public class MaximumProductPair_1 {
 		
 		// arr[k],arr[(k>arr.length-1 ?(arr.length-1):(k+1))]
 		
-		if(null!=result && result.length==0 && (Math.abs(arr[0])>Math.abs(arr[1]))){
+		if((Math.abs(arr[0])>=Math.abs(arr[1]))){
 			
 			result[0] = arr[1];  // stores second max
 			result[1] = arr[0];  // stores max
-			
+						
+		}else{
+			result[0] = arr[0];  // stores second max
+			result[1] = arr[1];  // stores max
 		}
+		
+		result[2] = Math.abs(result[0]);  // stores absolute second max to avoid recalculation
+		result[3] = Math.abs(result[1]);  // stores absolute max to avoid recalculation
+
 	}
+}
+@FunctionalInterface
+interface CalcAbsInterface {
+
+    public int calcAbsInterface(int arrayElement,int[] result,int k);
+
 }

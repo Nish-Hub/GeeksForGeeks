@@ -1,3 +1,4 @@
+package com.gfg.maxproductpair;
 import java.util.Arrays;
 
 /* 
